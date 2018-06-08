@@ -1,0 +1,73 @@
+1. What data types do each of these values represent?
+  1. "A Clockwork Orange" - string
+  2. 42 -integer
+  3. 09/02/1945 - date
+  4. 98.7 - float
+  5. $15.99 - numeric value
+
+2. Explain in your own words when a database might be used. Explain when a text file might be used.
+  A database might be used for an application or program that has tables of information that will
+  be queried or may need updating. A text file is good for a singular / simple, perhaps verbose,
+  work that may not need referencing. Furthermore, a text file is human readable whereas a database
+  is not.
+
+3. Describe one difference between SQL and other programming languages?
+  SQL is a database specific language that has the ability to query and manipulate data within
+  a database. SQL is also a declarative language meaning you describe the result and you get it
+  back via a black box.
+
+4. In your own words, explain how the pieces of a database system fit together at a high level?
+  Database systems are put together in a table structure. Columns are the very define what data
+  is being represented, rows are mini descriptions of the data, and at the intersection of a
+  column and row are cells or individual pieces of data.
+
+5.Explain the meaning of table, row, column, and value.
+  table- entire representation of a single database
+  row- complete conceptual unit within a table
+  column- defines what the data represents
+  value- some piece of info that the column name describes
+
+6. List 3 data types that can be used in a table.
+  -string
+  -date
+  -numeric value
+
+7.
+SELECT date, amount
+FROM payments;
+
+This would return the date and amounts from the payments table.
+
+SELECT amount
+FROM payments
+WHERE amount > 500;
+
+This would return all amounts greater than 500 from the payments table.
+
+SELECT *
+FROM payments
+WHERE payee = 'Mega Foods';
+
+This would return the information from all columns for the set of rows where the payee is Mega Foods
+within the payments table.
+
+8. users
+id  name            email                         signup
+1 Aleesia Algorithm aleesia.algorithm@uw.edu      2014-10-24
+2 DeAndre Data      datad@comcast.net             2008-01-20
+3 Chris Collection  chris.collection@outlook.com  2012-01-20
+4 Brandy Boolean    bboolean@nasa.gov             1999-10-15
+
+  a) The e-mail and signup date for the user named DeAndre Data.
+    SELECT email, signup
+    FROM users
+    WHERE name = 'DeAndre Data';
+
+  b) The user ID for the user with e-mail 'aleesia.algorithm@uw.edu'.
+    SELECT id
+    FROM users
+    WHERE email = 'aleesia.algorithm@uw.edu';
+  c) All the columns for the user ID equal to 4.
+    SELECT *
+    FROM users
+    WHERE id = 4;
