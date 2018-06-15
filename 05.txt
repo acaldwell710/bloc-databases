@@ -1,0 +1,123 @@
+1. List 5 aggregate functions and explain, in your own words, what they are for.
+Include a real world example for each. If you can't list these from memory, do
+these flashcards until you can!
+
+  -Count : this is to count the total rows within the table ;
+  Getting the different number of titles a video game has on inventory. For instance,
+  at Gamestop, we had an A-Z list that would print out if needed.
+  -Max : this will find the highest amount of something within a column ; Back to Gamestop,
+  we had to ship inventory to other stores, and we had a way to find out which shipments
+  had the highest amount of merchandise being sent out.
+  -Min : this will find the lowest amount of something within a column ; In the above scenario,
+  we also had a way to see the lowest amount of merchandise being sent out.
+  -Avg : this will find the average number of something within a column ; At Gamestop, we had to
+  try and promote the Power Up Rewards Card. Our software which tracked our KPI's would total up
+  the amount of PUR cards we would get for the day and average it with it the amount of transactions
+  we would have. This is kind of similar; but not quite the same type of average.
+  -Sum : this will add the total of something within a column ; We could also see the total
+  amount of shipments we would be sending out within a given week at Gamestop.
+
+2. Given this donations table, write queries and include the output for the
+following:
+
+  - The total of all donations received in the past year.
+  SELECT SUM(amount)
+  FROM donations;
+
+  - The total donations over time per donor (e.g. if Tanysha has donated 3 times
+  with the amounts $25, $30, and $50, then the result would be |Tanysha | 105 |)
+  SELECT SUM(amount)
+  FROM donations
+  ORDER BY donor;
+
+
+  - The average donation per donor.
+  SELECT AVG(amount)
+  FROM donations
+  ORDER BY donor;
+
+  - The number of donations over $100.
+  SELECT COUNT(amount)
+  FROM donations
+  WHERE amount > 100;
+
+  - The largest donation received in a single instance from a single donor.
+  SELECT MAX(amount)
+  FROM donations;
+
+  - The smallest donation received.
+  SELECT MIN(amount)
+  FROM donations;
+
+3. How would you determine the display order of data returned by your SELECT
+statement?
+    without an ORDER BY clause there is no order to the data that is returned
+
+4. What is a real world situation where you would use OFFSET?
+    Maybe a school wants to reward a certain amount of people within the senior
+    class that have high GPA's. However, they want to start after the highest GPA
+    because they're reward that person with the honor of Valedictorian. So they
+    decide to LIMIT X amount of people OFFSET 1.
+
+5. Why is it important to use ORDER BY when limiting your results?
+    as stated earlier, there is no built in order to the way data is output,
+    therefore the best way to view your data is with an ORDER BY statement
+
+6. What is the difference between HAVING and WHERE?
+    Essentially, they have the same function, which is to filter results by a condition.
+    However, the HAVING clause works differently from WHERE when used with GROUP BY
+    as it will eliminate groups of results with a single comparison.
+
+7. Correct the following SELECT statement:
+
+    SELECT id, SUM (amount)
+
+    FROM payment
+
+    HAVING SUM (amount) > 200;
+
+    ____________________________
+    correction:
+
+    SELECT SUM(amount)
+    FROM payment
+    GROUP BY id
+    HAVING SUM(amount) > 200;
+
+8. Follow the instructions for the scenarios below:
+
+  - Given this cats table from the previous checkpoint, list all cats organized
+  by intake date.
+    SELECT *
+    FROM cats
+    ORDER BY intake_date;
+
+  - Given this adoptions table, determine the 5 most recent adoptions to be
+  featured for a social media promotion called "Happy Tails" which lists recent
+  successful adoptions.
+    SELECT *
+    FROM adoptions
+    ORDER BY date DESC
+    LIMIT 5;
+
+  - There is a potential adopter looking for an adult female cat. In the most
+  efficient way possible, list all female cats 2 or more years old from the
+  cats table.
+    SELECT *
+    FROM adoptions
+    WHERE gender = 'F' AND adoption_date = NULL
+    ORDER BY age;
+
+  - From the donations table (from problem #2), find the top 5 donors with the
+  highest cumulative donation amounts to be honored as "Platinum Donors".
+    SELECT SUM(amount)
+    FROM donations
+    ORDER BY donor DESC
+    LIMIT 5;
+
+  - From the donations table (from problem #2), find donors 6-15 with the next
+  highest cumulative donation amounts to be honored as "Gold Donors".
+    SELECT SUM(amount)
+    FROM donations
+    ORDER BY donor DESC
+    LIMIT 9 OFFSET 5;
