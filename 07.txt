@@ -1,0 +1,86 @@
+1.
+
+Find a guest who exists in the database and has not booked a room.
+
+  SELECT guest.first_name, guest.last_name
+  FROM guest
+  JOIN booking
+  ON booking.guest_id = guest.id
+  WHERE booking.room_id = null;
+
+
+Find bookings for a guest who has booked two rooms for the same dates.
+
+  SELECT guest.first_name, guest.last_name
+  FROM guest
+  JOIN booking
+  ON booking.guest_id = guest.id
+  WHERE check_in >= 2018-07-01
+  AND checkout <= 2018-07-20
+  GROUP BY booking.guest_id
+  ORDER BY check_in;
+
+
+Find bookings for a guest who has booked one room several times on different dates.
+
+  SELECT guest.first_name, guest.last_name
+  FROM guest
+  JOIN booking
+  ON booking.guest_id = guest_id
+  WHERE check_in >= 2018-07-01
+  AND checkout <= 2018-07-20
+  GROUP BY booking.guest_id
+  ORDER BY booking.room_id;
+
+
+Count the number of unique guests who have booked the same room.
+
+  SELECT DISTINCT guest.first_name, guest.last_name
+  FROM guest
+  JOIN booking
+  ON booking.guest_id = guest_id
+  GROUP BY booking.guest_id
+  ORDER BY booking.room_id;
+
+
+  3.
+
+All students who have taken a particular class.
+
+  SELECT student.first_name, student.last_name, class.name
+  FROM student
+  JOIN schedules
+  ON schedules.student_id = student_id
+  JOIN class
+  ON schedules.class_id = class_id
+  WHERE class.name = "Biology"
+  ORDER BY student.last_name;
+
+
+The number of each grade (using letter grades A-F) earned in a particular class.
+
+  SELECT COUNT(DISTINCT) grade
+  FROM class
+  JOIN schedules
+  ON schedules.class_id = class_id
+  GROUP BY name
+  ORDER BY grade;
+
+
+Class names and the total number of students who have taken each class in the list.
+
+  SELECT COUNT class.name, student_id
+  FROM student
+  JOIN schedules
+  ON schedules.student_id = student_id
+  FROM class
+  JOIN schedules
+  ON schedules.class_id = class_id
+  GROUP BY class.name
+  ORDER BY student.last_name;
+
+
+The class taken by the largest number of students.
+
+  SELECT MAX(class_id)
+  FROM schedules;
