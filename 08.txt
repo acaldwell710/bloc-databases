@@ -1,0 +1,70 @@
+1. In your own words, explain the benefits of normalization.
+  Include a real world scenario where normalization is necessary.
+
+    - Normalization is a way of of logically grouping data for performance,
+    eliminating duplication.
+    A good example would be an office records book / directory.
+
+2. List and explain the different normal forms and how they relate
+  to one another, with regard to your real-world scenario in the first question.
+
+    - first normal form (1NF)- states that a column of a table cannot contain
+        multiple values
+    - second normal form (2NF)- is in 1NF, and non-key attributes (columns) cannot be
+        dependent on a subset of the primary key
+    - third normal form (3NF)- is in 2NF, all transitive functional dependencies of
+        non-prime attributes must not exist
+    - Boyce Codd normal form (BCNF)- is in 3NF, every dependency X -> Y, X must be a
+        super key of the table, which is a set of attributes whose values can be used
+        to uniquely identify all other attributes
+
+3. This student_records table contains students table contains students
+  and their grades in different subjects. The schema is already in first
+  normal form (1NF). Convert this schema to the third normal form (3NF)
+  using the techniques you learned in this checkpoint.
+
+      Current Table:
+
+      student_records
+      id  student_id  student_email             student_name  professor_id  professor_name  subject     grade
+      1   1           john.b20@hogwarts.edu     John B        2             William C       Philosophy  A
+      2   2           sarah.s20@hogwarts.edu    Sarah S       2             William C       Philosophy  C
+      3   3           martha.120@hogwarts.edu   Martha L      1             Natalie M       Economics   A
+      4   4           james.g20@hogwats.edu     James G       3             Mark W          Mathematics B
+      5   5           stanley.p20@hogwarts.edu  Stanley P     1             Natalie M       Economics   B
+
+      New Tables (3NF):
+
+      student_id  student_email student_name
+      professor_id  professor_name  subject
+      student_name  subject grade
+
+4. In your own words, explain the potential disadvantages of normalizing
+  the data above. What are its trade-offs? Submit your findings in the
+  submission table and discuss them with your mentor in your next session.
+
+      - The queries may take longer when searching the database, and it also makes reading the database more
+      difficult. When these items were together in one table, all of the information regarding the student
+      was in one place and on one line. However, for organizational purposes there was information that was
+      non-specific to the student that could have been placed in another table.
+
+5. Looking at the tables you have normalized. If you need to denormalize
+  to improve query performance or speed up reporting, how would you carry
+  out denormalization for this database design? Submit potential strategies
+  in the submission tab and discuss them with your mentor in your next session.
+
+      I don't think I would personally want to add of the information back together into 1NF form again.
+      However, I do think it would be helpful to have less tables. I would probably add more attributes to the
+      table starting with student_id, adding in the info from table 3 minus student_name. Essentially,
+      something along these lines:
+
+      student_id  student_email student_name subject grade
+      professor_id  professor_name  subject
+
+6. Explore the trade-offs between data normalization and denormalization
+  in this scenario, submit your findings in the submission tab, and discuss
+  them with your mentor in your next session.
+
+    Data normalizing is a great way of organizing data so that information isn't repeated and that only
+    relevant information is grouped together. In this way of optimizing a database, query performance may be
+    reduced when doing long or arduous queries. Denormalizing may be better for rendering a readable database.
