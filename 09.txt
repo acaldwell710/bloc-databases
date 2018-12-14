@@ -1,0 +1,194 @@
+1. Explain a subquery in your own words.
+  Is just a way to do an even more refined search.
+
+
+2. Where can you use a subquery within a SELECT statement?
+  A subquery can usually be found within a where clause,
+  however sometimes can be found in from and select clauses.
+
+
+3. When would you employ a subquery?
+  Subqueries are most often used when you do not want the aggregate function to apply to the main query.
+
+
+4. Explain a row constructor in your own words.
+  A row constructor is a way of building a row using values for fields. A row constructor does have to
+  consist of the same amount of columns that is returned from a subquery.
+
+
+5. What happens if a row in the subquery result provides a NULL value to the comparison?
+  The result of the comparison will be not true.
+
+
+6. What are the ways to use a subquery within a WHERE clause?
+If you can't remember them, do these flashcards until you can.
+  - IN, NOT IN, ANY, SOME, ALL : the subquery must return data in only 1 column
+
+  - EXISTS : the subquery returns at least 1 row
+
+  - NOT EXISTS : the subquery does not return any rows
+
+7. Using this Adoption schema and data, please write queries to retrieve the following information and include the results:
+
+  - All volunteers. If the volunteer is fostering a dog, include each dog as well.
+  SELECT volunteers.first_name, (SELECT dogs.name FROM dogs WHERE volunteers.foster_dog_id = dogs.id) as dog_name
+  FROM volunteers;
+
+  - The cat's name, adopter's name, and adopted date for each cat adopted within the past month
+    to be displayed as part of the "Happy Tail" social media promotion which posts recent successful adoptions.
+
+    SELECT adopters.first_name, adopters.last_name, (SELECT cats.name
+                                                     FROM cats
+                                                     JOIN cat_adoptions
+                                                     ON cats.id = cat_adoptions.cat_id
+                                                     WHERE cat_adoptions.adopter_id = adopters.id) as cat_name,
+                                                     (SELECT cats.adoption_date
+                                                     FROM cats
+                                                     JOIN cat_adoptions
+                                                     ON cats.id = cat_adoptions.cat_id
+                                                     WHERE cat_adoptions.adopter_id = adopters.id) as adoption_date
+    FROM adopters;
+
+  - Adopters who have not yet chosen a dog to adopt and generate all possible combinations of adopters and available dogs.
+
+      SELECT adopters.first_name,
+      	(SELECT dogs.name FROM dogs WHERE dogs.id = 10001) as dog_name,
+          (SELECT dogs.name FROM dogs WHERE dogs.id = 10002) as dog_name,
+          (SELECT dogs.name FROM dogs WHERE dogs.id = 10003) as dog_name,
+          (SELECT dogs.name FROM dogs WHERE dogs.id = 10004) as dog_name,
+          (SELECT dogs.name FROM dogs WHERE dogs.id = 10006) as dog_name
+      FROM adopters;
+
+
+  - Lists of all cats and all dogs who have not been adopted.
+
+    SELECT dogs.name,
+    	(SELECT cats.name
+    	FROM cats
+    	LEFT OUTER JOIN cat_adoptions
+    	ON cats.id = cat_adoptions.cat_id
+    	WHERE cats.id = 2) as cat_name,
+        (SELECT cats.name
+    	FROM cats
+    	LEFT OUTER JOIN cat_adoptions
+    	ON cats.id = cat_adoptions.cat_id
+    	WHERE cats.id = 5) as cat_name
+    FROM dogs
+    LEFT OUTER JOIN dog_adoptions
+    ON dogs.id = dog_adoptions.dog_id
+    WHERE dogs.id != 10007;
+
+
+  - The name of the person who adopted Rosco.
+
+        SELECT adopters.first_name, adopters.last_name (SELECT dogs.name
+                                 						FROM dogs
+                                 						JOIN dog_adoptions
+                                 						ON dogs.id = dog_adoptions.dog_id
+                                 						WHERE dogs.id = 10007) as dog_name
+
+      FROM adopters
+      JOIN dog_adoptions
+      ON adopters.id = dog_adoptions.adopter_id
+      WHERE dog_adoptions.dog_id = 10007;
+
+
+8. Using this Library schema and data, write queries applying the following scenarios, and include the results:
+  - To determine if the library should buy more copies of a given book, please provide the names and position,
+    in order, of all of the patrons with a hold (request for a book with all copies checked out)
+    on "Advanced Potion-Making".
+
+      SELECT *,
+  	(SELECT patrons.name
+  	FROM patrons
+  	WHERE patrons.id = 4) as first_patron,
+  	(SELECT patrons.name
+  	FROM patrons
+  	WHERE patrons.id =2) as second_patron
+    FROM transactions
+    WHERE isbn = '9136884926'
+    ORDER BY transactions.id;
+  - Make a list of all book titles and denote whether or not a copy of that book is checked out.
+
+  SELECT transactions.checked_in_date, transactions.isbn,
+        (SELECT books.title
+      FROM books
+      WHERE title = 'Hogwarts: A History') as book_title,
+        (SELECT books.title
+      FROM books
+      WHERE title = 'Fantastic Beasts and Where to Find Them') as book_title,
+        (SELECT books.title
+      FROM books
+      WHERE title = 'Advanced Potion-Making')as book_title
+  FROM transactions
+  ORDER BY transactions.checked_in_date DESC;
+
+
+  - In an effort to learn which books take longer to read, the librarians would like you to create a list
+    of average checked out time by book name in the past month.
+
+    SELECT AVG(checked_out_date), (SELECT books.title
+                               FROM books) as book_title
+    FROM transactions
+    WHERE checked_out_date <= CURRENT_DATE - INTERVAL '30 DAYS';
+
+
+  - In order to learn which items should be retired, make a list of all books that have not been checked out
+    in the past 5 years.
+
+    SELECT transactions.isbn, (SELECT books.title
+                    FROM books) as book_title
+    FROM transactions
+    WHERE checked_out_date >= CURRENT_DATE - INTERVAL '5 YEARS';
+
+
+  - List all of the library patrons. If they have one or more books checked out, correspond the books to the patrons.
+
+
+SELECT transactions.isbn, (SELECT patrons.name
+FROM patrons) as patron
+FROM transactions
+WHERE checked_in_date >= CURRENT_DATE - INTERVAL '1 DAY'
+ORDER BY patron_id;
+
+
+9. Using this Flight schema and data, write queries applying the following scenarios, and include the results:
+  - To determine the most profitable airplanes, find all airplane models where each flight has had over
+    250 paying customers in the past month.
+
+
+    SELECT transactions.seats_sold, (  SELECT flights.airplane_model
+    FROM flights) as flights
+    FROM transactions
+    WHERE seats_sold > 250
+    AND date >= (CURRENT_DATE - INTERVAL '30 DAYS');
+
+
+  - To determine the most profitable flights, find all destination-origin pairs where 90% or more of the
+    seats have been sold in the past month.
+
+
+   SELECT transactions.seats_sold, (SELECT flights.flight_number
+                                    FROM flights) as flight_number
+    FROM transactions
+    WHERE seats_sold >= (((2/4) * 100) - 10)
+    AND date >= (CURRENT_DATE - INTERVAL '30 DAYS')
+    ORDER BY seats_sold DESC;
+
+
+  - The airline is looking to expand its presence in Asia and globally. Find the total revenue of any flight
+    (not time restricted) arriving at or departing from Singapore (SIN).
+
+    SELECT transactions.total_revenue, (SELECT flights.flight_number
+    FROM flights
+    WHERE origin = 'SIN'
+    OR destination = 'SIN') as flights
+    FROM transactions
+    WHERE flight_number = 7352
+    OR flight_number = 7403;
+
+
+10. Compare the subqueries you've written above. Compare them to the joins you wrote in Checkpoint 6.
+Which ones are more readable? Which were more logical to write?
+
+In my opinion the joins were way easier / logical to write. I also feel that they were more readable.
