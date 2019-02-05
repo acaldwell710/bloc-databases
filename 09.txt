@@ -50,47 +50,40 @@ If you can't remember them, do these flashcards until you can.
     FROM adopters;
 
   - Adopters who have not yet chosen a dog to adopt and generate all possible combinations of adopters and available dogs.
-
-      SELECT adopters.first_name,
-      	(SELECT dogs.name FROM dogs WHERE dogs.id = 10001) as dog_name,
-          (SELECT dogs.name FROM dogs WHERE dogs.id = 10002) as dog_name,
-          (SELECT dogs.name FROM dogs WHERE dogs.id = 10003) as dog_name,
-          (SELECT dogs.name FROM dogs WHERE dogs.id = 10004) as dog_name,
-          (SELECT dogs.name FROM dogs WHERE dogs.id = 10006) as dog_name
-      FROM adopters;
-
+  SELECT adopters.first_name, dogs.name
+  FROM adopters
+  CROSS JOIN dogs
+      WHERE id NOT IN
+      (SELECT dog_adoptions.adopter_id
+      FROM dog_adoptions
+      JOIN adopters
+      ON adopters.id = dog_adoptions.adopter_id);
 
   - Lists of all cats and all dogs who have not been adopted.
 
-    SELECT dogs.name,
-    	(SELECT cats.name
-    	FROM cats
-    	LEFT OUTER JOIN cat_adoptions
-    	ON cats.id = cat_adoptions.cat_id
-    	WHERE cats.id = 2) as cat_name,
-        (SELECT cats.name
-    	FROM cats
-    	LEFT OUTER JOIN cat_adoptions
-    	ON cats.id = cat_adoptions.cat_id
-    	WHERE cats.id = 5) as cat_name
-    FROM dogs
-    LEFT OUTER JOIN dog_adoptions
-    ON dogs.id = dog_adoptions.dog_id
-    WHERE dogs.id != 10007;
+  SELECT name
+  FROM dogs
+  WHERE id NOT IN
+  	(SELECT dog_adoptions.dog_id
+       FROM dog_adoptions);
+  SELECT name
+  FROM cats
+  WHERE id NOT IN
+  	(SELECT cat_adoptions.cat_id
+       FROM cat_adoptions);
+
+
 
 
   - The name of the person who adopted Rosco.
+  SELECT first_name
+  FROM adopters
+  WHERE id IN
+  	(SELECT dog_adoptions.adopter_id
+       FROM dog_adoptions
+       WHERE dog_id = 10007);
 
-        SELECT adopters.first_name, adopters.last_name (SELECT dogs.name
-                                 						FROM dogs
-                                 						JOIN dog_adoptions
-                                 						ON dogs.id = dog_adoptions.dog_id
-                                 						WHERE dogs.id = 10007) as dog_name
 
-      FROM adopters
-      JOIN dog_adoptions
-      ON adopters.id = dog_adoptions.adopter_id
-      WHERE dog_adoptions.dog_id = 10007;
 
 
 8. Using this Library schema and data, write queries applying the following scenarios, and include the results:
@@ -98,16 +91,17 @@ If you can't remember them, do these flashcards until you can.
     in order, of all of the patrons with a hold (request for a book with all copies checked out)
     on "Advanced Potion-Making".
 
-      SELECT *,
-  	(SELECT patrons.name
-  	FROM patrons
-  	WHERE patrons.id = 4) as first_patron,
-  	(SELECT patrons.name
-  	FROM patrons
-  	WHERE patrons.id =2) as second_patron
-    FROM transactions
-    WHERE isbn = '9136884926'
-    ORDER BY transactions.id;
+
+    SELECT name
+    FROM patrons
+    WHERE id IN
+    (SELECT holds.patron_id
+     FROM holds
+     WHERE isbn = '9136884926');
+
+
+
+
   - Make a list of all book titles and denote whether or not a copy of that book is checked out.
 
   SELECT transactions.checked_in_date, transactions.isbn,
